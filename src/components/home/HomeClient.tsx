@@ -178,6 +178,30 @@ export default function HomeClient({
           </div>
         )}
 
+        {/* 快捷入口 */}
+        <div className="mb-6 grid grid-cols-2 gap-3">
+          <button
+            onClick={() => router.push('/signin')}
+            className="flex items-center gap-3 rounded-xl border border-[var(--rhythm-bg-border)] bg-[var(--rhythm-bg-card)] p-4 text-left transition-colors hover:border-[var(--rhythm-primary)]/30"
+          >
+            <span className="text-2xl">📅</span>
+            <div>
+              <p className="text-sm font-semibold text-[var(--rhythm-neutral-200)]">每日签到</p>
+              <p className="text-xs text-[var(--rhythm-neutral-500)]">赚取积分</p>
+            </div>
+          </button>
+          <button
+            onClick={() => router.push('/shop')}
+            className="flex items-center gap-3 rounded-xl border border-[var(--rhythm-bg-border)] bg-[var(--rhythm-bg-card)] p-4 text-left transition-colors hover:border-[var(--rhythm-primary)]/30"
+          >
+            <span className="text-2xl">🛒</span>
+            <div>
+              <p className="text-sm font-semibold text-[var(--rhythm-neutral-200)]">积分商城</p>
+              <p className="text-xs text-[var(--rhythm-neutral-500)]">BGM/道具/皮肤</p>
+            </div>
+          </button>
+        </div>
+
         {/* 开始训练 CTA */}
         <div className="rounded-2xl border border-[var(--rhythm-primary)]/30 bg-gradient-to-br from-[var(--rhythm-primary)]/20 to-[var(--rhythm-bg-card)] p-8 text-center shadow-[var(--rhythm-glow-primary)]">
           <h3 className="mb-2 font-display text-xl font-bold text-[var(--rhythm-neutral-50)]">
