@@ -11,6 +11,7 @@ import ResultOverlay from '@/components/quiz/ResultOverlay';
 import BeatVisualizer from '@/components/quiz/BeatVisualizer';
 import ConsolationCard from '@/components/quiz/ConsolationCard';
 import MilestoneShoutout from '@/components/quiz/MilestoneShoutout';
+import Ceremony from '@/components/ceremony/Ceremony';
 
 export default function QuizPage() {
   const router = useRouter();
@@ -28,6 +29,12 @@ export default function QuizPage() {
   const inputRef = useRef<HTMLDivElement>(null);
   const hasStarted = useRef(false);
   const [lastMilestone, setLastMilestone] = useState(0);
+  const [ceremonyData, setCeremonyData] = useState<{
+    rank: string;
+    mvpWord: string | null;
+    yesterdayComparison: string | null;
+  } | null>(null);
+  const [showCeremony, setShowCeremony] = useState(false);
 
   useEffect(() => {
     if (!hasStarted.current) {
@@ -66,6 +73,34 @@ export default function QuizPage() {
     }
   }, [state.questionIndex, router]);
 
+  // Save training session when finished
+  useEffect(() => {
+    if (state.phase === 'finished' && !showCeremony && !ceremonyData) {
+      const saveSession = async () => {
+        try {
+          const res = await fetch('/api/training', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              totalQuestions: state.questionIndex,
+              correctCount: state.correctCount,
+              maxCombo: state.maxCombo,
+              totalScore: state.sessionScore,
+            }),
+          });
+          if (res.ok) {
+            const data = await res.json();
+            setCeremonyData(data);
+            setShowCeremony(true);
+          }
+        } catch (err) {
+          console.error('Failed to save training:', err);
+        }
+      };
+      saveSession();
+    }
+  }, [state.phase, showCeremony, ceremonyData, state.questionIndex, state.correctCount, state.maxCombo, state.sessionScore]);
+
   const { currentQuestion, questionIndex, userInput, activeSlot, combo, comboState, phase, lastResult, showConsolation, brokenCombo } = state;
 
   if (phase === 'idle' && !currentQuestion) {
@@ -80,20 +115,24 @@ export default function QuizPage() {
   }
 
   if (phase === 'finished') {
+    if (showCeremony && ceremonyData) {
+      return (
+        <Ceremony
+          totalQuestions={state.questionIndex}
+          correctCount={state.correctCount}
+          maxCombo={state.maxCombo}
+          totalScore={state.sessionScore}
+          mvpWord={ceremonyData.mvpWord}
+          yesterdayComparison={ceremonyData.yesterdayComparison}
+        />
+      );
+    }
+
     return (
       <div className="flex min-h-screen items-center justify-center bg-[var(--rhythm-bg-deep)]">
         <div className="text-center">
-          <div className="text-6xl">🎉</div>
-          <h2 className="mt-4 text-2xl font-bold text-[var(--rhythm-neutral-50)]">Training Complete!</h2>
-          <p className="mt-2 text-[var(--rhythm-neutral-400)]">
-            Accuracy {state.correctCount}/{state.questionIndex} · Max Combo {state.maxCombo}x
-          </p>
-          <button
-            onClick={() => router.push('/')}
-            className="mt-6 rounded-xl bg-[var(--rhythm-primary)] px-8 py-3 font-semibold text-white transition-all hover:brightness-110"
-          >
-            Back to Home
-          </button>
+          <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-4 border-[var(--rhythm-bg-border)] border-t-[var(--rhythm-primary)]" />
+          <p className="text-[var(--rhythm-neutral-400)]">Generating your report card...</p>
         </div>
       </div>
     );
@@ -101,7 +140,6 @@ export default function QuizPage() {
 
   return (
     <div className="relative flex min-h-screen flex-col bg-[var(--rhythm-bg-deep)]">
-      {/* 里程碑喊话 */}
       <MilestoneShoutout
         combo={combo}
         lastMilestone={lastMilestone}
@@ -110,7 +148,7 @@ export default function QuizPage() {
 
       <div className="flex items-center justify-between px-4 py-3">
         <button onClick={handleExit} className="rounded-lg px-3 py-1.5 text-sm text-[var(--rhythm-neutral-400)] hover:text-[var(--rhythm-neutral-200)]">
-          ← Exit
+          &larr; Exit
         </button>
         <span className="text-sm text-[var(--rhythm-neutral-400)]">
           {questionIndex + 1}/{20}
@@ -118,7 +156,7 @@ export default function QuizPage() {
         <div className="flex items-center gap-2">
           {state.shields > 0 && (
             <span className="rounded-full bg-[var(--rhythm-secondary-cyan)]/20 px-2 py-0.5 font-display text-xs text-[var(--rhythm-secondary-cyan)]">
-              🛡️×{state.shields}
+              Shield x{state.shields}
             </span>
           )}
         </div>
@@ -182,12 +220,10 @@ export default function QuizPage() {
         </button>
       </div>
 
-      {/* 结果浮层 */}
       {phase === 'result' && lastResult && (
         <ResultOverlay result={lastResult} combo={combo} comboState={comboState} questionIndex={questionIndex} onNext={nextQuestion} />
       )}
 
-      {/* 虽败犹荣卡片 */}
       {showConsolation && (
         <ConsolationCard brokenCombo={brokenCombo} onDismiss={dismissConsolation} />
       )}
