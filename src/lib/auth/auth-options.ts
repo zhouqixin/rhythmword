@@ -1,11 +1,17 @@
 // NextAuth.js 配置
 // Credentials Provider (邮箱 + 密码)
-// JWT 策略，无需数据库 session 表（Phase 1 简化方案）
+// JWT 策略 — Phase 1 简化方案
+// 注意：Prisma 客户端通过动态 import 加载，避免构建时 Edge Runtime 冲突
 
 import type { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import bcrypt from 'bcryptjs';
-import { prisma } from '@/lib/db/prisma';
+
+// 动态导入 Prisma 以避免 Edge Runtime 问题
+async function getPrisma() {
+  const { prisma } = await import('@/lib/db/prisma');
+  return prisma;
+}
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -19,6 +25,8 @@ export const authOptions: NextAuthOptions = {
         if (!credentials?.email || !credentials?.password) {
           throw new Error('请输入邮箱和密码');
         }
+
+        const prisma = await getPrisma();
 
         const user = await prisma.user.findUnique({
           where: { email: credentials.email },
