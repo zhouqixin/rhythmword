@@ -1,7 +1,8 @@
 // 全局根布局
-// 暗色主题 + 字体加载 + Toaster
+// 暗色主题 + NextAuth SessionProvider + Toaster
 
 import type { Metadata } from 'next';
+import AuthProvider from '@/components/layout/AuthProvider';
 import { Toaster } from '@/components/ui/sonner';
 import './globals.css';
 
@@ -18,7 +19,9 @@ export default function RootLayout({
   return (
     <html lang="zh-CN" className="dark">
       <body className="min-h-screen bg-[var(--rhythm-bg-deep)] text-[var(--rhythm-neutral-200)]">
-        {children}
+        <AuthProvider>
+          {children}
+        </AuthProvider>
         <Toaster
           position="top-center"
           toastOptions={{
