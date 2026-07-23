@@ -1,0 +1,271 @@
+// RhythmWord - Prisma Schema
+// 英语语境填空训练应用 · 数据模型 v1.0
+// 架构评估文档: cloud-drive://XsvOfogsWHDj
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+// ============================================================
+// 用户系统
+// ============================================================
+
+model User {
+  id                  String   @id @default(uuid())
+  email               String   @unique
+  passwordHash        String
+  name                String   @default("")
+  grade               Int      @default(7) // 1-12
+  difficulty          String   @default("medium") // easy | medium | hard
+  accent              String   @default("en-US")  // en-US | en-GB
+  totalPoints         Int      @default(0)
+  level               Int      @default(1) // 1-50
+  bgmStyle            String?  // 当前装备的 BGM 风格
+  bgmVolume           Float    @default(0.5)
+  sfxVolume           Float    @default(0.7)
+  globalVolume        Float    @default(0.8)
+  isOnboarded         Boolean  @default(false)
+  reducedMotion       Boolean  @default(false)
+  firstBgmPurchase    Boolean  @default(false) // BGM 首购 5 折已用
+  firstSkinPurchase   Boolean  @default(false) // 皮肤首购 5 折已用
+  firstShopEntryAt    DateTime? // 首次进入商城时间(48h倒计时)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  // Relations
+  accounts            Account[]
+  sessions            Session[]
+  answerRecords       AnswerRecord[]
+  wrongBooks          WrongBook[]
+  scoreEvents         ScoreEvent[]
+  signIns             SignIn[]
+  inventories         Inventory[]
+  badges              Badge[]
+  trainingSessions    TrainingSession[]
+
+  @@map("users")
+}
+
+// NextAuth.js 模型
+model Account {
+  id                String  @id @default(uuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(uuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+// ============================================================
+// 题库系统
+// ============================================================
+
+model Question {
+  id            String   @id @default(uuid())
+  sentenceEn    String   // 完整英语句子
+  sentenceZh    String   // 中文翻译
+  targetWord    String   // 目标单词(答案)
+  firstLetter   String   // 首字母提示
+  blankCount    Int      // 空格数量(=目标单词长度)
+  grade         Int      // 1-12 年级
+  unit          String?  // 教材单元
+  difficulty    String   @default("medium") // easy | medium | hard
+  questionType  String   @default("first_letter") // first_letter | dictation
+  bpm           Int      @default(90)
+  generatedBy   String?  // AI 模型标识
+  reviewedBy    String?  // 审核模型标识
+  reviewStatus  String   @default("pending") // pending | approved | rejected
+  usageCount    Int      @default(0)
+  funFacts      String?  // JSON: 冷知识数组 ["词源趣事", "语言冷知识", ...]
+  createdAt     DateTime @default(now())
+
+  // Relations
+  answerRecords AnswerRecord[]
+  wrongBooks    WrongBook[]
+
+  @@index([grade, difficulty])
+  @@index([reviewStatus])
+  @@map("questions")
+}
+
+// ============================================================
+// 答题记录
+// ============================================================
+
+model AnswerRecord {
+  id               String   @id @default(uuid())
+  userId           String
+  questionId       String
+  userAnswer       String   // 用户输入
+  isCorrect        Boolean
+  timeSpent        Int      // 答题耗时(ms)
+  isQuickResponse  Boolean  @default(false) // 快速反应(<1.5s)
+  isPerfectSpelling Boolean @default(false) // 完美拼写
+  comboAtTime      Int      @default(0) // 答题时的 Combo 值
+  scoreEarned      Int      @default(0) // 本题获得积分
+  createdAt        DateTime @default(now())
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  question Question @relation(fields: [questionId], references: [id])
+
+  @@index([userId, createdAt])
+  @@map("answer_records")
+}
+
+// ============================================================
+// 错题本
+// ============================================================
+
+model WrongBook {
+  id           String   @id @default(uuid())
+  userId       String
+  questionId   String
+  correctCount Int      @default(0) // 答对次数(≥2 自动移除)
+  lastWrongAt  DateTime @default(now())
+  isConfirmed  Boolean  @default(false) // 用户点击「我记住了」
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  question Question @relation(fields: [questionId], references: [id])
+
+  @@unique([userId, questionId])
+  @@map("wrong_books")
+}
+
+// ============================================================
+// 积分事件
+// ============================================================
+
+model ScoreEvent {
+  id          String   @id @default(uuid())
+  userId      String
+  type        String   // answer|combo|quick|perfect|set|daily|signin|levelup|purchase|review
+  amount      Int      // 变化量(正=收入, 负=支出)
+  balance     Int      // 变化后余额
+  description String   // 可读描述
+  createdAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@map("score_events")
+}
+
+// ============================================================
+// 每日签到
+// ============================================================
+
+model SignIn {
+  id          String   @id @default(uuid())
+  userId      String
+  date        DateTime // 签到日期(仅日期部分)
+  streak      Int      // 连续签到天数
+  pointsEarned Int     // 本次获得积分
+  createdAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date])
+  @@map("sign_ins")
+}
+
+// ============================================================
+// 道具背包
+// ============================================================
+
+model Inventory {
+  id       String @id @default(uuid())
+  userId   String
+  itemType String // revive_card | skip_card | double_card
+  itemName String // 可读名称
+  quantity Int    @default(1)
+  isActive Boolean @default(false) // 答题页是否激活使用
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, itemType])
+  @@map("inventory")
+}
+
+// ============================================================
+// 徽章系统
+// ============================================================
+
+model Badge {
+  id         String   @id @default(uuid())
+  userId     String
+  badgeKey   String   // hundred_quiz | thousand_quiz | perfect_ten | combo_star | ...
+  badgeName  String   // 可读名称
+  earnedAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, badgeKey])
+  @@map("badges")
+}
+
+// ============================================================
+// 训练会话
+// ============================================================
+
+model TrainingSession {
+  id              String   @id @default(uuid())
+  userId          String
+  totalQuestions  Int      @default(0)
+  correctCount    Int      @default(0)
+  maxCombo        Int      @default(0)
+  totalScore      Int      @default(0)
+  rank            String?  // S | A | B | C (收官仪式评分)
+  mvpWordId       String?  // MVP 词汇
+  completed       Boolean  @default(false) // 是否完成 20 题
+  createdAt       DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@map("training_sessions")
+}
+
+// ============================================================
+// 商城商品(静态配置，非动态管理)
+// ============================================================
+
+model ShopItem {
+  id            String  @id @default(uuid())
+  category      String  // bgm | skin | item | theme
+  name          String
+  description   String
+  price         Int     // 原价
+  salePrice     Int?    // 特惠价
+  isWeeklyDeal  Boolean @default(false)
+  isActive      Boolean @default(true)
+  previewUrl    String? // BGM 试听 URL / 皮肤预览
+  sortOrder     Int     @default(0)
+
+  @@map("shop_items")
+}
