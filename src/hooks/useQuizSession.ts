@@ -1,7 +1,10 @@
 'use client';
 
-// 答题会话状态管理 Hook
-// 核心状态机: idle → playing → submitting → result → next
+// 答题会话状态管理 Hook — M4 增强版
+// Combo 三层保护：护盾 → 缓冲 → 归零
+// 护盾获取：连续答对 20 题得 1 个（不叠加，冷却期需再连对 20 题）
+// 缓冲：Combo>=30 时答错进入缓冲，下一题答对恢复，再答错归零
+// 虽败犹荣：Combo>=30 归零时弹出安慰卡片
 
 import { useCallback, useRef, useState } from 'react';
 
@@ -44,9 +47,16 @@ interface QuizSessionState {
   correctCount: number;
   lastResult: QuizResult | null;
   startTime: number;
+  consecutiveCorrect: number;  // 当前连续答对数（用于护盾获取追踪）
+  shieldCoolingDown: boolean;  // 护盾消耗后冷却中
+  showConsolation: boolean;    // 显示虽败犹荣卡片
+  lastMilestone: number;       // 上次触发的里程碑值
+  brokenCombo: number;         // 归零前的 Combo 值（用于安慰卡片）
 }
 
 const TOTAL_QUESTIONS = 20;
+const SHIELD_THRESHOLD = 20;     // 连续答对 20 题获得护盾
+const CONSOLATION_THRESHOLD = 30; // Combo>=30 归零触发安慰卡片
 
 export function useQuizSession() {
   const [state, setState] = useState<QuizSessionState>({
@@ -63,18 +73,22 @@ export function useQuizSession() {
     correctCount: 0,
     lastResult: null,
     startTime: 0,
+    consecutiveCorrect: 0,
+    shieldCoolingDown: false,
+    showConsolation: false,
+    lastMilestone: 0,
+    brokenCombo: 0,
   });
 
   const sessionRef = useRef(state);
   sessionRef.current = state;
 
-  // 加载下一题
   const loadNextQuestion = useCallback(async () => {
     try {
       const res = await fetch('/api/quiz/question');
       if (!res.ok) {
         const data = await res.json();
-        throw new Error(data.error || '加载题目失败');
+        throw new Error(data.error || 'Failed to load question');
       }
       const data = await res.json();
       const q = data.question as QuizQuestion;
@@ -89,12 +103,11 @@ export function useQuizSession() {
         lastResult: null,
       }));
     } catch (err) {
-      console.error('加载题目失败:', err);
+      console.error('Failed to load question:', err);
       setState((prev) => ({ ...prev, phase: 'idle' }));
     }
   }, []);
 
-  // 开始新训练
   const startSession = useCallback(async () => {
     setState({
       phase: 'playing',
@@ -110,12 +123,15 @@ export function useQuizSession() {
       correctCount: 0,
       lastResult: null,
       startTime: 0,
+      consecutiveCorrect: 0,
+      shieldCoolingDown: false,
+      showConsolation: false,
+      lastMilestone: 0,
+      brokenCombo: 0,
     });
-    // 延迟加载第一题
     setTimeout(() => loadNextQuestion(), 0);
   }, [loadNextQuestion]);
 
-  // 处理字母输入
   const handleKeyInput = useCallback((key: string) => {
     const s = sessionRef.current;
     if (s.phase !== 'playing' || !s.currentQuestion) return;
@@ -137,7 +153,6 @@ export function useQuizSession() {
     });
   }, []);
 
-  // 删除上一个字母
   const handleBackspace = useCallback(() => {
     const s = sessionRef.current;
     if (s.phase !== 'playing') return;
@@ -154,7 +169,6 @@ export function useQuizSession() {
     });
   }, []);
 
-  // 提交答案
   const submitAnswer = useCallback(async () => {
     const s = sessionRef.current;
     if (s.phase !== 'playing' || !s.currentQuestion) return;
@@ -184,23 +198,46 @@ export function useQuizSession() {
         const isCorrect = data.isCorrect;
         let newCombo = prev.combo;
         let newShields = prev.shields;
-        let newComboState: ComboState = 'active';
+        let newComboState: ComboState = prev.comboState;
+        let newConsecutive = prev.consecutiveCorrect;
+        let newCoolingDown = prev.shieldCoolingDown;
+        let newShowConsolation = false;
+        let newBrokenCombo = 0;
 
         if (isCorrect) {
           newCombo += 1;
-          // 连续答对 20 题获得护盾
-          if (newCombo > 0 && newCombo % 20 === 0 && newShields < 1) {
+          newConsecutive += 1;
+
+          // 护盾获取：连续答对 20 题 + 当前护盾 < 1 + 不在冷却期
+          if (newConsecutive >= SHIELD_THRESHOLD && newShields < 1 && !newCoolingDown) {
             newShields += 1;
+            newConsecutive = 0; // 重置计数
+          }
+
+          // 缓冲恢复：缓冲状态下答对，恢复 Combo
+          if (prev.comboState === 'buffering') {
+            newComboState = 'active';
+          } else {
+            newComboState = 'active';
           }
         } else {
+          newConsecutive = 0; // 答错重置连续计数
+
+          // 三层保护判断
           if (newShields > 0) {
-            // 护盾保护
+            // 第一层：护盾保护
             newShields -= 1;
             newComboState = 'shielded';
-          } else if (newCombo >= 30) {
-            // 高 Combo 缓冲
+            newCoolingDown = true; // 护盾消耗后进入冷却期
+          } else if (newCombo >= CONSOLATION_THRESHOLD) {
+            // 第二层：缓冲（高 Combo 保护）
             newComboState = 'buffering';
           } else {
+            // 第三层：归零
+            if (newCombo >= CONSOLATION_THRESHOLD) {
+              newShowConsolation = true; // 虽败犹荣
+              newBrokenCombo = newCombo;
+            }
             newCombo = 0;
             newComboState = 'broken';
           }
@@ -215,6 +252,10 @@ export function useQuizSession() {
           comboState: newComboState,
           sessionScore: prev.sessionScore + data.scoreEarned,
           correctCount: prev.correctCount + (isCorrect ? 1 : 0),
+          consecutiveCorrect: newConsecutive,
+          shieldCoolingDown: newCoolingDown,
+          showConsolation: newShowConsolation,
+          brokenCombo: newBrokenCombo,
           lastResult: {
             isCorrect,
             correctAnswer: data.correctAnswer,
@@ -227,12 +268,11 @@ export function useQuizSession() {
         };
       });
     } catch (err) {
-      console.error('提交失败:', err);
+      console.error('Submit failed:', err);
       setState((prev) => ({ ...prev, phase: 'playing' }));
     }
   }, []);
 
-  // 进入下一题
   const nextQuestion = useCallback(() => {
     const s = sessionRef.current;
     const nextIndex = s.questionIndex + 1;
@@ -250,7 +290,9 @@ export function useQuizSession() {
       userInput: [],
       activeSlot: 0,
       lastResult: null,
-      comboState: prev.comboState === 'buffering' || prev.comboState === 'shielded'
+      showConsolation: false,
+      // 缓冲/护盾状态持续到下一题
+      comboState: prev.comboState === 'shielded'
         ? 'active'
         : prev.comboState === 'broken'
           ? 'active'
@@ -260,13 +302,23 @@ export function useQuizSession() {
     loadNextQuestion();
   }, [loadNextQuestion]);
 
-  // 缓冲状态下一题答错归零
-  const handleBufferFail = useCallback(() => {
-    setState((prev) => ({
-      ...prev,
-      combo: 0,
-      comboState: 'broken',
-    }));
+  // 缓冲状态超时归零
+  const handleBufferTimeout = useCallback(() => {
+    setState((prev) => {
+      const brokenCombo = prev.combo;
+      return {
+        ...prev,
+        combo: 0,
+        comboState: 'broken',
+        showConsolation: brokenCombo >= CONSOLATION_THRESHOLD,
+        brokenCombo: brokenCombo >= CONSOLATION_THRESHOLD ? brokenCombo : 0,
+      };
+    });
+  }, []);
+
+  // 关闭虽败犹荣卡片
+  const dismissConsolation = useCallback(() => {
+    setState((prev) => ({ ...prev, showConsolation: false }));
   }, []);
 
   return {
@@ -277,7 +329,8 @@ export function useQuizSession() {
     handleBackspace,
     submitAnswer,
     nextQuestion,
-    handleBufferFail,
+    handleBufferTimeout,
+    dismissConsolation,
     totalQuestions: TOTAL_QUESTIONS,
   };
 }

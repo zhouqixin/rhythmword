@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { useQuizSession } from '@/hooks/useQuizSession';
@@ -9,6 +9,8 @@ import LetterSlot from '@/components/quiz/LetterSlot';
 import ComboCounter from '@/components/quiz/ComboCounter';
 import ResultOverlay from '@/components/quiz/ResultOverlay';
 import BeatVisualizer from '@/components/quiz/BeatVisualizer';
+import ConsolationCard from '@/components/quiz/ConsolationCard';
+import MilestoneShoutout from '@/components/quiz/MilestoneShoutout';
 
 export default function QuizPage() {
   const router = useRouter();
@@ -19,11 +21,13 @@ export default function QuizPage() {
     handleBackspace,
     submitAnswer,
     nextQuestion,
+    dismissConsolation,
   } = useQuizSession();
 
   const { state: ttsState, speak } = useTTS({ accent: 'en-US' });
   const inputRef = useRef<HTMLDivElement>(null);
   const hasStarted = useRef(false);
+  const [lastMilestone, setLastMilestone] = useState(0);
 
   useEffect(() => {
     if (!hasStarted.current) {
@@ -62,7 +66,7 @@ export default function QuizPage() {
     }
   }, [state.questionIndex, router]);
 
-  const { currentQuestion, questionIndex, userInput, activeSlot, combo, comboState, phase, lastResult } = state;
+  const { currentQuestion, questionIndex, userInput, activeSlot, combo, comboState, phase, lastResult, showConsolation, brokenCombo } = state;
 
   if (phase === 'idle' && !currentQuestion) {
     return (
@@ -97,6 +101,13 @@ export default function QuizPage() {
 
   return (
     <div className="relative flex min-h-screen flex-col bg-[var(--rhythm-bg-deep)]">
+      {/* 里程碑喊话 */}
+      <MilestoneShoutout
+        combo={combo}
+        lastMilestone={lastMilestone}
+        onMilestoneReached={setLastMilestone}
+      />
+
       <div className="flex items-center justify-between px-4 py-3">
         <button onClick={handleExit} className="rounded-lg px-3 py-1.5 text-sm text-[var(--rhythm-neutral-400)] hover:text-[var(--rhythm-neutral-200)]">
           ← Exit
@@ -104,7 +115,13 @@ export default function QuizPage() {
         <span className="text-sm text-[var(--rhythm-neutral-400)]">
           {questionIndex + 1}/{20}
         </span>
-        <div className="w-16" />
+        <div className="flex items-center gap-2">
+          {state.shields > 0 && (
+            <span className="rounded-full bg-[var(--rhythm-secondary-cyan)]/20 px-2 py-0.5 font-display text-xs text-[var(--rhythm-secondary-cyan)]">
+              🛡️×{state.shields}
+            </span>
+          )}
+        </div>
       </div>
 
       <div className="flex flex-1 flex-col items-center justify-center px-4">
@@ -165,8 +182,14 @@ export default function QuizPage() {
         </button>
       </div>
 
+      {/* 结果浮层 */}
       {phase === 'result' && lastResult && (
         <ResultOverlay result={lastResult} combo={combo} comboState={comboState} questionIndex={questionIndex} onNext={nextQuestion} />
+      )}
+
+      {/* 虽败犹荣卡片 */}
+      {showConsolation && (
+        <ConsolationCard brokenCombo={brokenCombo} onDismiss={dismissConsolation} />
       )}
     </div>
   );
