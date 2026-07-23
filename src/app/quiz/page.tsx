@@ -190,12 +190,17 @@ export default function QuizPage() {
 
         <div className="mb-2 text-center">
           <p className="mb-4 text-sm text-[var(--rhythm-neutral-400)]">
-            First letter: <span className="font-bold text-[var(--rhythm-primary-light)]">{currentQuestion?.firstLetter?.toUpperCase()}</span>
+            Type the rest of the word (first letter given)
           </p>
           <div className="flex items-center justify-center gap-2" ref={inputRef}>
             {currentQuestion && (
               <>
-                <LetterSlot value={currentQuestion.firstLetter.toUpperCase()} index={-1} isActive={false} />
+                <LetterSlot
+                  value={currentQuestion.firstLetter.toUpperCase()}
+                  index={-1}
+                  isActive={false}
+                  isGiven={true}
+                />
                 {userInput.map((char, i) => (
                   <LetterSlot
                     key={i}

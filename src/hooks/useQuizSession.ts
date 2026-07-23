@@ -93,11 +93,14 @@ export function useQuizSession() {
       const data = await res.json();
       const q = data.question as QuizQuestion;
 
+      // blankCount = targetWord.length, user only types remaining letters after first letter
+      const slotsToFill = q.blankCount - 1;
+
       setState((prev) => ({
         ...prev,
         phase: 'playing',
         currentQuestion: q,
-        userInput: Array(q.blankCount).fill(''),
+        userInput: Array(slotsToFill).fill(''),
         activeSlot: 0,
         startTime: Date.now(),
         lastResult: null,
@@ -173,7 +176,7 @@ export function useQuizSession() {
     const s = sessionRef.current;
     if (s.phase !== 'playing' || !s.currentQuestion) return;
 
-    const userAnswer = s.userInput.join('');
+    const userAnswer = s.currentQuestion.firstLetter.toLowerCase() + s.userInput.join('');
     if (userAnswer.length === 0) return;
 
     setState((prev) => ({ ...prev, phase: 'submitting' }));

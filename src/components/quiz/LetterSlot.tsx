@@ -11,6 +11,7 @@ interface LetterSlotProps {
   isActive: boolean;
   isCorrect?: boolean | null;
   isError?: boolean | null;
+  isGiven?: boolean;  // 首字母预填，不可编辑
 }
 
 export default function LetterSlot({
@@ -19,13 +20,16 @@ export default function LetterSlot({
   isActive,
   isCorrect,
   isError,
+  isGiven,
 }: LetterSlotProps) {
   return (
     <div
       className={cn(
         'flex h-12 w-10 items-center justify-center rounded-lg border-2 text-xl font-bold transition-all duration-200',
+        // 首字母（预填）
+        isGiven && 'border-[var(--rhythm-primary)]/50 bg-[var(--rhythm-primary)]/15 text-[var(--rhythm-primary-light)] shadow-inner',
         // 默认状态
-        'border-[var(--rhythm-bg-border)] bg-[var(--rhythm-bg-card)] text-[var(--rhythm-neutral-200)]',
+        !isGiven && 'border-[var(--rhythm-bg-border)] bg-[var(--rhythm-bg-card)] text-[var(--rhythm-neutral-200)]',
         // 当前聚焦
         isActive && 'border-[var(--rhythm-primary-light)] bg-[var(--rhythm-primary)]/10 shadow-[var(--rhythm-glow-primary)] scale-110',
         // 正确
