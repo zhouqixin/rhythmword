@@ -16,6 +16,7 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const text = searchParams.get('text');
   const accent = searchParams.get('accent') || 'en-US';
+  const rateParam = searchParams.get('rate') || '0';
 
   if (!text || text.trim().length === 0) {
     return NextResponse.json({ error: 'Missing text parameter' }, { status: 400 });
@@ -25,6 +26,11 @@ export async function GET(request: Request) {
   const safeText = text.trim().substring(0, 500);
   const voice = VOICE_MAP[accent] || VOICE_MAP['en-US'];
 
+  // Rate: negative = slower, positive = faster
+  // edge-tts format: "-50%" to "+100%"
+  const rateValue = Math.max(-50, Math.min(100, parseInt(rateParam)));
+  const rateStr = `${rateValue >= 0 ? '+' : ''}${rateValue}%`;
+
   try {
     // Use edge-tts CLI for reliable streaming
     const args = [
@@ -32,7 +38,7 @@ export async function GET(request: Request) {
       '--text', safeText,
       '--voice', voice,
       '--write-media', '-',  // stdout
-      '--rate=+0%',
+      `--rate=${rateStr}`,
       '--pitch=+0Hz',
     ];
 

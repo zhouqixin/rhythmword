@@ -109,6 +109,7 @@ model Question {
   answerRecords AnswerRecord[]
   wrongBooks    WrongBook[]
 
+  @@unique([targetWord, grade])
   @@index([grade, difficulty])
   @@index([reviewStatus])
   @@map("questions")

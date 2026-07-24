@@ -1,0 +1,802 @@
+[
+  {
+    "sentenceEn": "I have a ___.",
+    "sentenceZh": "我有一只猫。",
+    "targetWord": "cat",
+    "firstLetter": "c",
+    "grade": 1,
+    "difficulty": "easy"
+  },
+  {
+    "sentenceEn": "The ___ is red.",
+    "sentenceZh": "苹果是红色的。",
+    "targetWord": "apple",
+    "firstLetter": "a",
+    "grade": 1,
+    "difficulty": "easy"
+  },
+  {
+    "sentenceEn": "I can ___ a bird.",
+    "sentenceZh": "我能看见一只鸟。",
+    "targetWord": "see",
+    "firstLetter": "s",
+    "grade": 1,
+    "difficulty": "easy"
+  },
+  {
+    "sentenceEn": "This is my ___.",
+    "sentenceZh": "这是我的狗。",
+    "targetWord": "dog",
+    "firstLetter": "d",
+    "grade": 1,
+    "difficulty": "easy"
+  },
+  {
+    "sentenceEn": "She is my ___.",
+    "sentenceZh": "她是我的朋友。",
+    "targetWord": "friend",
+    "firstLetter": "f",
+    "grade": 1,
+    "difficulty": "easy"
+  },
+  {
+    "sentenceEn": "The ___ is blue.",
+    "sentenceZh": "天空是蓝色的。",
+    "targetWord": "sky",
+    "firstLetter": "s",
+    "grade": 1,
+    "difficulty": "easy"
+  },
+  {
+    "sentenceEn": "I like to ___ books.",
+    "sentenceZh": "我喜欢读书。",
+    "targetWord": "read",
+    "firstLetter": "r",
+    "grade": 1,
+    "difficulty": "easy"
+  },
+  {
+    "sentenceEn": "He can ___ fast.",
+    "sentenceZh": "他能跑得快。",
+    "targetWord": "run",
+    "firstLetter": "r",
+    "grade": 1,
+    "difficulty": "easy"
+  },
+  {
+    "sentenceEn": "The ___ is big.",
+    "sentenceZh": "房子很大。",
+    "targetWord": "house",
+    "firstLetter": "h",
+    "grade": 1,
+    "difficulty": "easy"
+  },
+  {
+    "sentenceEn": "I want some ___.",
+    "sentenceZh": "我想要一些水。",
+    "targetWord": "water",
+    "firstLetter": "w",
+    "grade": 1,
+    "difficulty": "easy"
+  },
+  {
+    "sentenceEn": "She has a ___.",
+    "sentenceZh": "她有一个球。",
+    "targetWord": "ball",
+    "firstLetter": "b",
+    "grade": 1,
+    "difficulty": "easy"
+  },
+  {
+    "sentenceEn": "The ___ is hot.",
+    "sentenceZh": "太阳很热。",
+    "targetWord": "sun",
+    "firstLetter": "s",
+    "grade": 1,
+    "difficulty": "easy"
+  },
+  {
+    "sentenceEn": "I ___ to school.",
+    "sentenceZh": "我去学校。",
+    "targetWord": "go",
+    "firstLetter": "g",
+    "grade": 1,
+    "difficulty": "easy"
+  },
+  {
+    "sentenceEn": "This is a ___.",
+    "sentenceZh": "这是一本书。",
+    "targetWord": "book",
+    "firstLetter": "b",
+    "grade": 1,
+    "difficulty": "easy"
+  },
+  {
+    "sentenceEn": "The ___ is nice.",
+    "sentenceZh": "花很漂亮。",
+    "targetWord": "flower",
+    "firstLetter": "f",
+    "grade": 1,
+    "difficulty": "easy"
+  },
+  {
+    "sentenceEn": "I ___ my mom.",
+    "sentenceZh": "我爱我的妈妈。",
+    "targetWord": "love",
+    "firstLetter": "l",
+    "grade": 1,
+    "difficulty": "easy"
+  },
+  {
+    "sentenceEn": "He is a ___.",
+    "sentenceZh": "他是一个男孩。",
+    "targetWord": "boy",
+    "firstLetter": "b",
+    "grade": 1,
+    "difficulty": "easy"
+  },
+  {
+    "sentenceEn": "She is a ___.",
+    "sentenceZh": "她是一个女孩。",
+    "targetWord": "girl",
+    "firstLetter": "g",
+    "grade": 1,
+    "difficulty": "easy"
+  },
+  {
+    "sentenceEn": "The ___ is green.",
+    "sentenceZh": "树是绿色的。",
+    "targetWord": "tree",
+    "firstLetter": "t",
+    "grade": 1,
+    "difficulty": "easy"
+  },
+  {
+    "sentenceEn": "I have two ___.",
+    "sentenceZh": "我有两只眼睛。",
+    "targetWord": "eyes",
+    "firstLetter": "e",
+    "grade": 1,
+    "difficulty": "easy"
+  },
+  {
+    "sentenceEn": "Please ___ down.",
+    "sentenceZh": "请坐下。",
+    "targetWord": "sit",
+    "firstLetter": "s",
+    "grade": 1,
+    "difficulty": "easy"
+  },
+  {
+    "sentenceEn": "I can ___ a picture.",
+    "sentenceZh": "我会画一幅画。",
+    "targetWord": "draw",
+    "firstLetter": "d",
+    "grade": 1,
+    "difficulty": "easy"
+  },
+  {
+    "sentenceEn": "The ___ is small.",
+    "sentenceZh": "老鼠很小。",
+    "targetWord": "mouse",
+    "firstLetter": "m",
+    "grade": 1,
+    "difficulty": "easy"
+  },
+  {
+    "sentenceEn": "I ___ breakfast.",
+    "sentenceZh": "我吃早餐。",
+    "targetWord": "eat",
+    "firstLetter": "e",
+    "grade": 1,
+    "difficulty": "easy"
+  },
+  {
+    "sentenceEn": "It is a ___ day.",
+    "sentenceZh": "这是美好的一天。",
+    "targetWord": "good",
+    "firstLetter": "g",
+    "grade": 1,
+    "difficulty": "easy"
+  },
+  {
+    "sentenceEn": "The ___ is cold.",
+    "sentenceZh": "牛奶是冷的。",
+    "targetWord": "milk",
+    "firstLetter": "m",
+    "grade": 1,
+    "difficulty": "easy"
+  },
+  {
+    "sentenceEn": "I have a ___.",
+    "sentenceZh": "我有一支笔。",
+    "targetWord": "pen",
+    "firstLetter": "p",
+    "grade": 1,
+    "difficulty": "easy"
+  },
+  {
+    "sentenceEn": "She can ___ well.",
+    "sentenceZh": "她能唱得很好。",
+    "targetWord": "sing",
+    "firstLetter": "s",
+    "grade": 1,
+    "difficulty": "easy"
+  },
+  {
+    "sentenceEn": "The ___ is yellow.",
+    "sentenceZh": "星星是黄色的。",
+    "targetWord": "star",
+    "firstLetter": "s",
+    "grade": 1,
+    "difficulty": "easy"
+  },
+  {
+    "sentenceEn": "I ___ happy today.",
+    "sentenceZh": "我今天感到开心。",
+    "targetWord": "feel",
+    "firstLetter": "f",
+    "grade": 1,
+    "difficulty": "easy"
+  },
+  {
+    "sentenceEn": "He has a ___.",
+    "sentenceZh": "他有一个玩具。",
+    "targetWord": "toy",
+    "firstLetter": "t",
+    "grade": 1,
+    "difficulty": "easy"
+  },
+  {
+    "sentenceEn": "The ___ is warm.",
+    "sentenceZh": "外套很暖和。",
+    "targetWord": "coat",
+    "firstLetter": "c",
+    "grade": 1,
+    "difficulty": "easy"
+  },
+  {
+    "sentenceEn": "I like to ___ games.",
+    "sentenceZh": "我喜欢玩游戏。",
+    "targetWord": "play",
+    "firstLetter": "p",
+    "grade": 1,
+    "difficulty": "easy"
+  },
+  {
+    "sentenceEn": "This is my ___.",
+    "sentenceZh": "这是我的房间。",
+    "targetWord": "room",
+    "firstLetter": "r",
+    "grade": 1,
+    "difficulty": "easy"
+  },
+  {
+    "sentenceEn": "She has long ___.",
+    "sentenceZh": "她有长头发。",
+    "targetWord": "hair",
+    "firstLetter": "h",
+    "grade": 1,
+    "difficulty": "easy"
+  },
+  {
+    "sentenceEn": "I ___ at seven.",
+    "sentenceZh": "我七点起床。",
+    "targetWord": "wake",
+    "firstLetter": "w",
+    "grade": 1,
+    "difficulty": "easy"
+  },
+  {
+    "sentenceEn": "The ___ is sweet.",
+    "sentenceZh": "蛋糕很甜。",
+    "targetWord": "cake",
+    "firstLetter": "c",
+    "grade": 1,
+    "difficulty": "easy"
+  },
+  {
+    "sentenceEn": "He can ___ high.",
+    "sentenceZh": "他能跳得高。",
+    "targetWord": "jump",
+    "firstLetter": "j",
+    "grade": 1,
+    "difficulty": "easy"
+  },
+  {
+    "sentenceEn": "I want a ___.",
+    "sentenceZh": "我想要一个礼物。",
+    "targetWord": "gift",
+    "firstLetter": "g",
+    "grade": 1,
+    "difficulty": "easy"
+  },
+  {
+    "sentenceEn": "The ___ is open.",
+    "sentenceZh": "门是开着的。",
+    "targetWord": "door",
+    "firstLetter": "d",
+    "grade": 1,
+    "difficulty": "easy"
+  },
+  {
+    "sentenceEn": "I see a ___.",
+    "sentenceZh": "我看见一条鱼。",
+    "targetWord": "fish",
+    "firstLetter": "f",
+    "grade": 1,
+    "difficulty": "easy"
+  },
+  {
+    "sentenceEn": "The ___ is round.",
+    "sentenceZh": "月亮是圆的。",
+    "targetWord": "moon",
+    "firstLetter": "m",
+    "grade": 1,
+    "difficulty": "easy"
+  },
+  {
+    "sentenceEn": "I have a ___.",
+    "sentenceZh": "我有一个梦想。",
+    "targetWord": "dream",
+    "firstLetter": "d",
+    "grade": 1,
+    "difficulty": "easy"
+  },
+  {
+    "sentenceEn": "He is very ___.",
+    "sentenceZh": "他很高。",
+    "targetWord": "tall",
+    "firstLetter": "t",
+    "grade": 1,
+    "difficulty": "easy"
+  },
+  {
+    "sentenceEn": "I ___ milk every day.",
+    "sentenceZh": "我每天喝牛奶。",
+    "targetWord": "drink",
+    "firstLetter": "d",
+    "grade": 1,
+    "difficulty": "easy"
+  },
+  {
+    "sentenceEn": "The ___ is white.",
+    "sentenceZh": "雪是白色的。",
+    "targetWord": "snow",
+    "firstLetter": "s",
+    "grade": 1,
+    "difficulty": "easy"
+  },
+  {
+    "sentenceEn": "She has a ___.",
+    "sentenceZh": "她有一只宠物。",
+    "targetWord": "pet",
+    "firstLetter": "p",
+    "grade": 1,
+    "difficulty": "easy"
+  },
+  {
+    "sentenceEn": "I ___ my hands.",
+    "sentenceZh": "我洗手。",
+    "targetWord": "wash",
+    "firstLetter": "w",
+    "grade": 1,
+    "difficulty": "easy"
+  },
+  {
+    "sentenceEn": "The ___ is loud.",
+    "sentenceZh": "铃声很响。",
+    "targetWord": "bell",
+    "firstLetter": "b",
+    "grade": 1,
+    "difficulty": "easy"
+  },
+  {
+    "sentenceEn": "I like this ___.",
+    "sentenceZh": "我喜欢这首歌。",
+    "targetWord": "song",
+    "firstLetter": "s",
+    "grade": 1,
+    "difficulty": "easy"
+  },
+  {
+    "sentenceEn": "The ___ is fast.",
+    "sentenceZh": "汽车很快。",
+    "targetWord": "car",
+    "firstLetter": "c",
+    "grade": 1,
+    "difficulty": "easy"
+  },
+  {
+    "sentenceEn": "I have a ___.",
+    "sentenceZh": "我有一顶帽子。",
+    "targetWord": "hat",
+    "firstLetter": "h",
+    "grade": 1,
+    "difficulty": "easy"
+  },
+  {
+    "sentenceEn": "The ___ is deep.",
+    "sentenceZh": "河很深。",
+    "targetWord": "river",
+    "firstLetter": "r",
+    "grade": 1,
+    "difficulty": "medium"
+  },
+  {
+    "sentenceEn": "I ___ my teeth.",
+    "sentenceZh": "我刷牙。",
+    "targetWord": "brush",
+    "firstLetter": "b",
+    "grade": 1,
+    "difficulty": "medium"
+  },
+  {
+    "sentenceEn": "He is my ___.",
+    "sentenceZh": "他是我的兄弟。",
+    "targetWord": "brother",
+    "firstLetter": "b",
+    "grade": 1,
+    "difficulty": "medium"
+  },
+  {
+    "sentenceEn": "She is my ___.",
+    "sentenceZh": "她是我的姐妹。",
+    "targetWord": "sister",
+    "firstLetter": "s",
+    "grade": 1,
+    "difficulty": "medium"
+  },
+  {
+    "sentenceEn": "The ___ is bright.",
+    "sentenceZh": "光线很亮。",
+    "targetWord": "light",
+    "firstLetter": "l",
+    "grade": 1,
+    "difficulty": "medium"
+  },
+  {
+    "sentenceEn": "I ___ my homework.",
+    "sentenceZh": "我做作业。",
+    "targetWord": "do",
+    "firstLetter": "d",
+    "grade": 1,
+    "difficulty": "easy"
+  },
+  {
+    "sentenceEn": "The ___ is clean.",
+    "sentenceZh": "桌子很干净。",
+    "targetWord": "table",
+    "firstLetter": "t",
+    "grade": 1,
+    "difficulty": "medium"
+  },
+  {
+    "sentenceEn": "I have a ___.",
+    "sentenceZh": "我有一辆自行车。",
+    "targetWord": "bike",
+    "firstLetter": "b",
+    "grade": 1,
+    "difficulty": "easy"
+  },
+  {
+    "sentenceEn": "The ___ is soft.",
+    "sentenceZh": "床很柔软。",
+    "targetWord": "bed",
+    "firstLetter": "b",
+    "grade": 1,
+    "difficulty": "easy"
+  },
+  {
+    "sentenceEn": "The ___ is heavy.",
+    "sentenceZh": "包很重。",
+    "targetWord": "bag",
+    "firstLetter": "b",
+    "grade": 1,
+    "difficulty": "easy"
+  },
+  {
+    "sentenceEn": "I ___ the answer.",
+    "sentenceZh": "我知道答案。",
+    "targetWord": "know",
+    "firstLetter": "k",
+    "grade": 1,
+    "difficulty": "easy"
+  },
+  {
+    "sentenceEn": "The ___ is beautiful.",
+    "sentenceZh": "花园很漂亮。",
+    "targetWord": "garden",
+    "firstLetter": "g",
+    "grade": 1,
+    "difficulty": "medium"
+  },
+  {
+    "sentenceEn": "The ___ is delicious.",
+    "sentenceZh": "食物很美味。",
+    "targetWord": "food",
+    "firstLetter": "f",
+    "grade": 1,
+    "difficulty": "easy"
+  },
+  {
+    "sentenceEn": "The ___ is empty.",
+    "sentenceZh": "盒子是空的。",
+    "targetWord": "box",
+    "firstLetter": "b",
+    "grade": 1,
+    "difficulty": "easy"
+  },
+  {
+    "sentenceEn": "I ___ my mother cooking.",
+    "sentenceZh": "我帮妈妈做饭。",
+    "targetWord": "help",
+    "firstLetter": "h",
+    "grade": 1,
+    "difficulty": "easy"
+  },
+  {
+    "sentenceEn": "The ___ is dark.",
+    "sentenceZh": "夜晚很黑。",
+    "targetWord": "night",
+    "firstLetter": "n",
+    "grade": 1,
+    "difficulty": "easy"
+  },
+  {
+    "sentenceEn": "The ___ is quiet.",
+    "sentenceZh": "图书馆很安静。",
+    "targetWord": "library",
+    "firstLetter": "l",
+    "grade": 1,
+    "difficulty": "hard"
+  },
+  {
+    "sentenceEn": "I have a ___.",
+    "sentenceZh": "我有一台电脑。",
+    "targetWord": "computer",
+    "firstLetter": "c",
+    "grade": 1,
+    "difficulty": "hard"
+  },
+  {
+    "sentenceEn": "The ___ is interesting.",
+    "sentenceZh": "故事很有趣。",
+    "targetWord": "story",
+    "firstLetter": "s",
+    "grade": 1,
+    "difficulty": "medium"
+  },
+  {
+    "sentenceEn": "I ___ to be early.",
+    "sentenceZh": "我尽量早到。",
+    "targetWord": "try",
+    "firstLetter": "t",
+    "grade": 1,
+    "difficulty": "easy"
+  },
+  {
+    "sentenceEn": "The ___ is full.",
+    "sentenceZh": "杯子是满的。",
+    "targetWord": "cup",
+    "firstLetter": "c",
+    "grade": 1,
+    "difficulty": "easy"
+  },
+  {
+    "sentenceEn": "I have a ___.",
+    "sentenceZh": "我有一把尺子。",
+    "targetWord": "ruler",
+    "firstLetter": "r",
+    "grade": 1,
+    "difficulty": "medium"
+  },
+  {
+    "sentenceEn": "The ___ is sweet.",
+    "sentenceZh": "糖果很甜。",
+    "targetWord": "candy",
+    "firstLetter": "c",
+    "grade": 1,
+    "difficulty": "easy"
+  },
+  {
+    "sentenceEn": "She ___ to music.",
+    "sentenceZh": "她听音乐。",
+    "targetWord": "listens",
+    "firstLetter": "l",
+    "grade": 1,
+    "difficulty": "medium"
+  },
+  {
+    "sentenceEn": "I ___ a new word.",
+    "sentenceZh": "我学了一个新词。",
+    "targetWord": "learned",
+    "firstLetter": "l",
+    "grade": 1,
+    "difficulty": "medium"
+  },
+  {
+    "sentenceEn": "He ___ the ball.",
+    "sentenceZh": "他接住了球。",
+    "targetWord": "caught",
+    "firstLetter": "c",
+    "grade": 1,
+    "difficulty": "medium"
+  },
+  {
+    "sentenceEn": "She ___ a red dress.",
+    "sentenceZh": "她穿了一条红裙子。",
+    "targetWord": "wears",
+    "firstLetter": "w",
+    "grade": 1,
+    "difficulty": "medium"
+  },
+  {
+    "sentenceEn": "He ___ his lunch.",
+    "sentenceZh": "他带来了他的午餐。",
+    "targetWord": "brought",
+    "firstLetter": "b",
+    "grade": 1,
+    "difficulty": "medium"
+  },
+  {
+    "sentenceEn": "She ___ her name.",
+    "sentenceZh": "她写了她的名字。",
+    "targetWord": "wrote",
+    "firstLetter": "w",
+    "grade": 1,
+    "difficulty": "medium"
+  },
+  {
+    "sentenceEn": "She ___ her friend.",
+    "sentenceZh": "她帮助了她的朋友。",
+    "targetWord": "helped",
+    "firstLetter": "h",
+    "grade": 1,
+    "difficulty": "medium"
+  },
+  {
+    "sentenceEn": "He ___ the piano.",
+    "sentenceZh": "他弹钢琴。",
+    "targetWord": "plays",
+    "firstLetter": "p",
+    "grade": 1,
+    "difficulty": "medium"
+  },
+  {
+    "sentenceEn": "I ___ my room clean.",
+    "sentenceZh": "我保持房间整洁。",
+    "targetWord": "keep",
+    "firstLetter": "k",
+    "grade": 1,
+    "difficulty": "medium"
+  },
+  {
+    "sentenceEn": "She ___ to be a doctor.",
+    "sentenceZh": "她想要成为一名医生。",
+    "targetWord": "wants",
+    "firstLetter": "w",
+    "grade": 1,
+    "difficulty": "medium"
+  },
+  {
+    "sentenceEn": "He ___ to the park.",
+    "sentenceZh": "他步行去公园。",
+    "targetWord": "walks",
+    "firstLetter": "w",
+    "grade": 1,
+    "difficulty": "medium"
+  },
+  {
+    "sentenceEn": "I ___ a story yesterday.",
+    "sentenceZh": "我昨天读了一个故事。",
+    "targetWord": "read",
+    "firstLetter": "r",
+    "grade": 1,
+    "difficulty": "medium"
+  },
+  {
+    "sentenceEn": "She ___ English every day.",
+    "sentenceZh": "她每天练习英语。",
+    "targetWord": "practices",
+    "firstLetter": "p",
+    "grade": 1,
+    "difficulty": "hard"
+  },
+  {
+    "sentenceEn": "The ___ is important.",
+    "sentenceZh": "家庭作业很重要。",
+    "targetWord": "homework",
+    "firstLetter": "h",
+    "grade": 1,
+    "difficulty": "hard"
+  },
+  {
+    "sentenceEn": "He ___ his bike to school.",
+    "sentenceZh": "他骑自行车上学。",
+    "targetWord": "rides",
+    "firstLetter": "r",
+    "grade": 1,
+    "difficulty": "medium"
+  },
+  {
+    "sentenceEn": "I ___ my grandma every week.",
+    "sentenceZh": "我每周看望奶奶。",
+    "targetWord": "visit",
+    "firstLetter": "v",
+    "grade": 1,
+    "difficulty": "medium"
+  },
+  {
+    "sentenceEn": "She ___ a beautiful picture.",
+    "sentenceZh": "她画了一幅美丽的画。",
+    "targetWord": "drew",
+    "firstLetter": "d",
+    "grade": 1,
+    "difficulty": "medium"
+  },
+  {
+    "sentenceEn": "He ___ the window.",
+    "sentenceZh": "他关上了窗户。",
+    "targetWord": "closed",
+    "firstLetter": "c",
+    "grade": 1,
+    "difficulty": "medium"
+  },
+  {
+    "sentenceEn": "She ___ a song.",
+    "sentenceZh": "她唱了一首歌。",
+    "targetWord": "sang",
+    "firstLetter": "s",
+    "grade": 1,
+    "difficulty": "easy"
+  },
+  {
+    "sentenceEn": "He ___ a story.",
+    "sentenceZh": "他讲了一个故事。",
+    "targetWord": "told",
+    "firstLetter": "t",
+    "grade": 1,
+    "difficulty": "easy"
+  },
+  {
+    "sentenceEn": "I have a ___.",
+    "sentenceZh": "我有一个问题。",
+    "targetWord": "question",
+    "firstLetter": "q",
+    "grade": 1,
+    "difficulty": "medium"
+  },
+  {
+    "sentenceEn": "The ___ is noisy.",
+    "sentenceZh": "教室很吵。",
+    "targetWord": "classroom",
+    "firstLetter": "c",
+    "grade": 1,
+    "difficulty": "hard"
+  },
+  {
+    "sentenceEn": "I ___ my grandma.",
+    "sentenceZh": "我爱我的奶奶。",
+    "targetWord": "love",
+    "firstLetter": "l",
+    "grade": 1,
+    "difficulty": "easy"
+  },
+  {
+    "sentenceEn": "I want to ___ a teacher.",
+    "sentenceZh": "我想成为一名老师。",
+    "targetWord": "become",
+    "firstLetter": "b",
+    "grade": 1,
+    "difficulty": "medium"
+  },
+  {
+    "sentenceEn": "The ___ is busy.",
+    "sentenceZh": "街道很繁忙。",
+    "targetWord": "street",
+    "firstLetter": "s",
+    "grade": 1,
+    "difficulty": "medium"
+  }
+]

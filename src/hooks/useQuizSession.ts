@@ -16,8 +16,10 @@ export interface QuizQuestion {
   firstLetter: string;
   blankCount: number;
   questionType: string;
+  difficulty: string;
   bpm: number;
   funFacts: string[];
+  hintPositions: number[];
 }
 
 export interface QuizResult {
@@ -37,8 +39,10 @@ interface QuizSessionState {
   phase: QuizPhase;
   questionIndex: number;
   currentQuestion: QuizQuestion | null;
-  userInput: string[];
-  activeSlot: number;
+  userInput: string[];           // 完整单词的输入数组，hint 位置预填，用户编辑其余位置
+  activeSlot: number;            // 当前光标所在位置（跳过 hint 位置后的第一个可编辑位置）
+  hintPositions: number[];       // 当前题目的提示位置（0-based）
+  shakeInput: boolean;           // 触发输入框摇晃动画
   combo: number;
   maxCombo: number;
   shields: number;
@@ -65,6 +69,8 @@ export function useQuizSession() {
     currentQuestion: null,
     userInput: [],
     activeSlot: 0,
+    hintPositions: [],
+    shakeInput: false,
     combo: 0,
     maxCombo: 0,
     shields: 0,
@@ -93,15 +99,25 @@ export function useQuizSession() {
       const data = await res.json();
       const q = data.question as QuizQuestion;
 
-      // blankCount = targetWord.length, user only types remaining letters after first letter
-      const slotsToFill = q.blankCount - 1;
+      // userInput 长度 = blankCount（完整单词），hint 位置预填正确字母（小写）
+      const slotsToFill = q.blankCount;
+      const initialInput: string[] = Array(slotsToFill).fill('');
+      const hints = q.hintPositions || [];
+      hints.forEach((pos: number) => {
+        if (pos < slotsToFill) {
+          initialInput[pos] = q.targetWord[pos].toLowerCase();
+        }
+      });
 
+      // 光标从 0 开始，不跳过 hint 位置（hint 作为 placeholder 可被覆盖）
       setState((prev) => ({
         ...prev,
         phase: 'playing',
         currentQuestion: q,
-        userInput: Array(slotsToFill).fill(''),
+        userInput: initialInput,
         activeSlot: 0,
+        hintPositions: hints,
+        shakeInput: false,
         startTime: Date.now(),
         lastResult: null,
       }));
@@ -118,6 +134,8 @@ export function useQuizSession() {
       currentQuestion: null,
       userInput: [],
       activeSlot: 0,
+      hintPositions: [],
+      shakeInput: false,
       combo: 0,
       maxCombo: 0,
       shields: 0,
@@ -141,18 +159,26 @@ export function useQuizSession() {
 
     setState((prev) => {
       if (!prev.currentQuestion) return prev;
+      const wordLen = prev.currentQuestion.blankCount;
       const newInput = [...prev.userInput];
       const slot = prev.activeSlot;
 
-      if (slot < prev.currentQuestion.blankCount) {
+      if (slot < wordLen) {
+        // 直接覆盖当前位置（包括 hint placeholder 也可被覆盖）
         newInput[slot] = key.toLowerCase();
         return {
           ...prev,
           userInput: newInput,
-          activeSlot: Math.min(slot + 1, prev.currentQuestion.blankCount),
+          activeSlot: Math.min(slot + 1, wordLen),
+        };
+      } else {
+        // 超额输入：允许超出 blankCount
+        return {
+          ...prev,
+          userInput: [...prev.userInput, key.toLowerCase()],
+          activeSlot: prev.activeSlot + 1,
         };
       }
-      return prev;
     });
   }, []);
 
@@ -161,12 +187,20 @@ export function useQuizSession() {
     if (s.phase !== 'playing') return;
 
     setState((prev) => {
+      const hints = prev.hintPositions;
+      const word = prev.currentQuestion?.targetWord ?? '';
       const slot = prev.activeSlot;
-      const newInput = [...prev.userInput];
 
-      if (slot > 0) {
-        newInput[slot - 1] = '';
-        return { ...prev, userInput: newInput, activeSlot: slot - 1 };
+      if (slot > 0 && slot <= prev.userInput.length) {
+        const newInput = [...prev.userInput];
+        const target = slot - 1;
+        // 删除后：如果是 hint 位置，恢复为 placeholder 字母；否则清空
+        if (hints.includes(target)) {
+          newInput[target] = word[target]?.toLowerCase() || '';
+        } else {
+          newInput[target] = '';
+        }
+        return { ...prev, userInput: newInput, activeSlot: target };
       }
       return prev;
     });
@@ -176,8 +210,9 @@ export function useQuizSession() {
     const s = sessionRef.current;
     if (s.phase !== 'playing' || !s.currentQuestion) return;
 
-    const userAnswer = s.currentQuestion.firstLetter.toLowerCase() + s.userInput.join('');
-    if (userAnswer.length === 0) return;
+    // 截取前 blankCount 个字符构造答案
+    const fullInput = s.userInput.slice(0, s.currentQuestion.blankCount);
+    const userAnswer = fullInput.join('');
 
     setState((prev) => ({ ...prev, phase: 'submitting' }));
 
@@ -292,6 +327,8 @@ export function useQuizSession() {
       currentQuestion: null,
       userInput: [],
       activeSlot: 0,
+      hintPositions: [],
+      shakeInput: false,
       lastResult: null,
       showConsolation: false,
       // 缓冲/护盾状态持续到下一题

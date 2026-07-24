@@ -39,15 +39,16 @@ export default function SettingsPage() {
       const res = await fetch('/api/user/profile');
       if (res.ok) {
         const data = await res.json();
+        const user = data.user || data;
         setSettings({
-          accent: data.accent || 'en-US',
-          difficulty: data.difficulty || 'medium',
-          grade: data.grade || 7,
-          bgmVolume: data.bgmVolume ?? 0.5,
-          sfxVolume: data.sfxVolume ?? 0.7,
-          globalVolume: data.globalVolume ?? 0.8,
-          reducedMotion: data.reducedMotion || false,
-          bgmStyle: data.bgmStyle || null,
+          accent: user.accent || 'en-US',
+          difficulty: user.difficulty || 'medium',
+          grade: user.grade || 7,
+          bgmVolume: user.bgmVolume ?? 0.5,
+          sfxVolume: user.sfxVolume ?? 0.7,
+          globalVolume: user.globalVolume ?? 0.8,
+          reducedMotion: user.reducedMotion || false,
+          bgmStyle: user.bgmStyle || null,
         });
       }
     } catch (err) {

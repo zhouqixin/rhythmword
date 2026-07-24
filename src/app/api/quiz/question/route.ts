@@ -6,6 +6,7 @@ import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth/auth-options';
 import { prisma } from '@/lib/db/prisma';
+import { computeHintPositions, type Difficulty } from '@/lib/hints';
 
 export async function GET() {
   const session = await getServerSession(authOptions);
@@ -83,9 +84,15 @@ function formatQuestion(q: {
   firstLetter: string;
   blankCount: number;
   questionType: string;
+  difficulty: string;
   bpm: number;
   funFacts: string | null;
 }) {
+  const hintPositions = computeHintPositions(
+    q.blankCount,
+    q.difficulty as Difficulty
+  );
+
   return {
     id: q.id,
     sentenceEn: q.sentenceEn,
@@ -94,7 +101,9 @@ function formatQuestion(q: {
     firstLetter: q.firstLetter,
     blankCount: q.blankCount,
     questionType: q.questionType,
+    difficulty: q.difficulty,
     bpm: q.bpm,
     funFacts: q.funFacts ? JSON.parse(q.funFacts) : [],
+    hintPositions,
   };
 }

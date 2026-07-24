@@ -35,10 +35,12 @@ export default function Ceremony({ totalQuestions, correctCount, maxCombo, total
   const accuracy = totalQuestions > 0 ? Math.round((correctCount / totalQuestions) * 100) : 0;
   const config = RANK_CONFIG[rank];
   const [phase, setPhase] = useState<"intro" | "rank" | "details">("intro");
+  const [visible, setVisible] = useState(true);
 
   useEffect(() => {
-    const t1 = setTimeout(() => setPhase("rank"), 800);
-    const t2 = setTimeout(() => setPhase("details"), 2000);
+    // Slower animation: intro 2s → rank 3s → details
+    const t1 = setTimeout(() => setPhase("rank"), 2000);
+    const t2 = setTimeout(() => setPhase("details"), 5000);
     return () => { clearTimeout(t1); clearTimeout(t2); };
   }, []);
 
@@ -46,33 +48,33 @@ export default function Ceremony({ totalQuestions, correctCount, maxCombo, total
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--rhythm-bg-deep)]">
       <div className="w-full max-w-sm mx-4 text-center">
         {phase === "intro" && (
-          <div className="animate-fade-out-wobble">
-            <div className="text-6xl mb-4">🎵</div>
-            <h2 className="text-2xl font-bold text-[var(--rhythm-neutral-50)] mb-2">Training Complete!</h2>
-            <p className="text-sm text-[var(--rhythm-neutral-400)]">Generating your report card...</p>
+          <div className="animate-fade-in" style={{ animationDuration: '1.5s' }}>
+            <div className="text-6xl mb-4 animate-bounce-in">🎵</div>
+            <h2 className="text-3xl font-bold text-[var(--rhythm-neutral-50)] mb-2">Training Complete!</h2>
+            <p className="text-sm text-[var(--rhythm-neutral-400)] mt-4">Generating your report card...</p>
           </div>
         )}
         {phase === "rank" && (
-          <div className="animate-fade-out-wobble">
-            <div className={"w-32 h-32 mx-auto mb-6 rounded-full bg-gradient-to-br " + config.bg + " border-2 border-white/10 flex items-center justify-center shadow-2xl " + (rank === "S" ? "shadow-amber-500/20 animate-breathe" : "")}>
-              <span className={"text-6xl font-black font-[Orbitron] " + config.color}>{config.label}</span>
+          <div className="animate-fade-in" style={{ animationDuration: '1s' }}>
+            <div className={"w-40 h-40 mx-auto mb-6 rounded-full bg-gradient-to-br " + config.bg + " border-2 border-white/10 flex items-center justify-center shadow-2xl " + (rank === "S" ? "shadow-amber-500/20 animate-breathe" : "")}>
+              <span className={"text-7xl font-black font-[Orbitron] " + config.color}>{config.label}</span>
             </div>
-            <p className="text-xl font-bold text-[var(--rhythm-neutral-50)] mb-2">{config.emoji} {config.message}</p>
+            <p className="text-2xl font-bold text-[var(--rhythm-neutral-50)] mb-2">{config.emoji} {config.message}</p>
           </div>
         )}
         {phase === "details" && (
-          <div className="space-y-6 animate-fade-out-wobble">
-            <div className={"w-24 h-24 mx-auto rounded-full bg-gradient-to-br " + config.bg + " border-2 border-white/10 flex items-center justify-center " + (rank === "S" ? "shadow-lg shadow-amber-500/20" : "")}>
-              <span className={"text-4xl font-black font-[Orbitron] " + config.color}>{config.label}</span>
+          <div className="space-y-6 animate-fade-in" style={{ animationDuration: '0.8s' }}>
+            <div className={"w-28 h-28 mx-auto rounded-full bg-gradient-to-br " + config.bg + " border-2 border-white/10 flex items-center justify-center " + (rank === "S" ? "shadow-lg shadow-amber-500/20" : "")}>
+              <span className={"text-5xl font-black font-[Orbitron] " + config.color}>{config.label}</span>
             </div>
-            <p className="text-lg font-bold text-[var(--rhythm-neutral-50)]">{config.emoji} {config.message}</p>
+            <p className="text-xl font-bold text-[var(--rhythm-neutral-50)]">{config.emoji} {config.message}</p>
             <div className="grid grid-cols-2 gap-3 p-4 rounded-2xl bg-[var(--rhythm-bg-card)] border border-[var(--rhythm-bg-border)]">
-              <div className="text-center p-2"><p className="text-2xl font-black font-[Orbitron] text-[var(--rhythm-primary-light)]">{accuracy}%</p><p className="text-xs text-[var(--rhythm-neutral-500)] mt-1">Accuracy</p></div>
-              <div className="text-center p-2"><p className="text-2xl font-black font-[Orbitron] text-[var(--rhythm-secondary)]">{correctCount}/{totalQuestions}</p><p className="text-xs text-[var(--rhythm-neutral-500)] mt-1">Correct/Total</p></div>
-              <div className="text-center p-2"><p className="text-2xl font-black font-[Orbitron] text-[var(--rhythm-warning)]">{maxCombo}x</p><p className="text-xs text-[var(--rhythm-neutral-500)] mt-1">Max Combo</p></div>
-              <div className="text-center p-2"><p className="text-2xl font-black font-[Orbitron] text-[var(--rhythm-primary-light)]">+{totalScore}</p><p className="text-xs text-[var(--rhythm-neutral-500)] mt-1">Score Earned</p></div>
+              <div className="text-center p-2"><p className="text-3xl font-black font-[Orbitron] text-[var(--rhythm-primary-light)]">{accuracy}%</p><p className="text-xs text-[var(--rhythm-neutral-500)] mt-1">Accuracy</p></div>
+              <div className="text-center p-2"><p className="text-3xl font-black font-[Orbitron] text-[var(--rhythm-secondary)]">{correctCount}/{totalQuestions}</p><p className="text-xs text-[var(--rhythm-neutral-500)] mt-1">Correct/Total</p></div>
+              <div className="text-center p-2"><p className="text-3xl font-black font-[Orbitron] text-[var(--rhythm-warning)]">{maxCombo}x</p><p className="text-xs text-[var(--rhythm-neutral-500)] mt-1">Max Combo</p></div>
+              <div className="text-center p-2"><p className="text-3xl font-black font-[Orbitron] text-[var(--rhythm-primary-light)]">+{totalScore}</p><p className="text-xs text-[var(--rhythm-neutral-500)] mt-1">Score Earned</p></div>
             </div>
-            {mvpWord && (<div className="p-4 rounded-2xl bg-[var(--rhythm-bg-card)] border border-[var(--rhythm-primary)]/20"><p className="text-xs text-[var(--rhythm-neutral-500)] mb-1">MVP Word</p><p className="text-xl font-bold font-[Orbitron] text-[var(--rhythm-primary-light)]">{mvpWord}</p></div>)}
+            {mvpWord && (<div className="p-4 rounded-2xl bg-[var(--rhythm-bg-card)] border border-[var(--rhythm-primary)]/20"><p className="text-xs text-[var(--rhythm-neutral-500)] mb-1">MVP Word</p><p className="text-2xl font-bold font-[Orbitron] text-[var(--rhythm-primary-light)]">{mvpWord}</p></div>)}
             {yesterdayComparison && (<div className="text-sm text-[var(--rhythm-neutral-400)]">{yesterdayComparison}</div>)}
             <div className="flex gap-3 pt-2">
               <button onClick={() => router.push("/wrongbook")} className="flex-1 px-4 py-3 rounded-xl border border-[var(--rhythm-bg-border)] text-sm font-semibold text-[var(--rhythm-neutral-400)] hover:text-[var(--rhythm-neutral-200)] transition-colors">Wrong Book</button>

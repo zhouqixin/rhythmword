@@ -2,9 +2,9 @@
 
 // 答题结果浮层
 // 正确：绿色庆祝 + 积分飘字 → 5s 自动下一题
-// 错误：红色抖动 + 正确答案 + 冷知识轮换 + 60s 倒计时 + 「我记住了」按钮
+// 错误：逐字母标红错误位 + 正确答案 + 冷知识（固定高度防跳动） + 「我记住了」
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { cn } from '@/lib/utils';
 import type { QuizResult, ComboState } from '@/hooks/useQuizSession';
 
@@ -14,6 +14,37 @@ interface ResultOverlayProps {
   comboState: ComboState;
   questionIndex: number;
   onNext: () => void;
+}
+
+/** Compare user answer vs correct answer, return per-position error flags */
+function getErrorMap(userAnswer: string, correctAnswer: string): boolean[] {
+  const len = Math.max(userAnswer.length, correctAnswer.length);
+  const map: boolean[] = [];
+  for (let i = 0; i < len; i++) {
+    map.push(userAnswer[i]?.toLowerCase() !== correctAnswer[i]?.toLowerCase());
+  }
+  return map;
+}
+
+/** Render answer with per-letter highlighting */
+function AnswerWithErrors({ answer, errorMap, isError }: { answer: string; errorMap: boolean[]; isError: boolean }) {
+  return (
+    <div className="flex justify-center gap-1 flex-wrap">
+      {answer.split('').map((ch, i) => (
+        <span
+          key={i}
+          className={cn(
+            'inline-flex h-10 w-8 items-center justify-center rounded-md border-2 text-lg font-bold',
+            errorMap[i]
+              ? 'border-[var(--rhythm-error)] bg-[var(--rhythm-error)]/20 text-[var(--rhythm-error)]'
+              : 'border-[var(--rhythm-success)]/60 bg-[var(--rhythm-success)]/15 text-[var(--rhythm-success)]'
+          )}
+        >
+          {ch}
+        </span>
+      ))}
+    </div>
+  );
 }
 
 export default function ResultOverlay({
@@ -26,28 +57,39 @@ export default function ResultOverlay({
   const [countdown, setCountdown] = useState(result.isCorrect ? 5 : 60);
   const [funFactIndex, setFunFactIndex] = useState(0);
 
+  const errorMap = useMemo(
+    () => getErrorMap(result.userAnswer || '', result.correctAnswer || ''),
+    [result.userAnswer, result.correctAnswer]
+  );
+
   // 倒计时
   useEffect(() => {
     if (countdown <= 0) {
       onNext();
       return;
     }
-
-    const timer = setInterval(() => {
-      setCountdown((prev) => prev - 1);
-    }, 1000);
-
+    const timer = setInterval(() => setCountdown((prev) => prev - 1), 1000);
     return () => clearInterval(timer);
   }, [countdown, onNext]);
+
+  // Enter 键跳过
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        onNext();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [onNext]);
 
   // 冷知识轮换（3s 一条）
   useEffect(() => {
     if (result.isCorrect || result.funFacts.length <= 1) return;
-
     const timer = setInterval(() => {
       setFunFactIndex((prev) => (prev + 1) % result.funFacts.length);
     }, 3000);
-
     return () => clearInterval(timer);
   }, [result.isCorrect, result.funFacts.length]);
 
@@ -84,34 +126,33 @@ export default function ResultOverlay({
         {/* 结果文字 */}
         <h2
           className={cn(
-            'mb-2 text-2xl font-bold',
-            result.isCorrect
-              ? 'text-[var(--rhythm-success)]'
-              : 'text-[var(--rhythm-error)]'
+            'mb-4 text-2xl font-bold',
+            result.isCorrect ? 'text-[var(--rhythm-success)]' : 'text-[var(--rhythm-error)]'
           )}
         >
           {result.isCorrect ? '回答正确！' : '回答错误'}
         </h2>
 
-        {/* 错误时显示正确答案 */}
+        {/* 错误时：逐字母标红 + 显示正确答案 */}
         {!result.isCorrect && (
-          <div className="mb-4">
-            <p className="text-sm text-[var(--rhythm-neutral-400)]">正确答案</p>
-            <p className="font-display text-2xl font-bold text-[var(--rhythm-neutral-50)]">
-              {result.correctAnswer}
-            </p>
-            {result.userAnswer && (
-              <p className="mt-1 text-sm text-[var(--rhythm-neutral-600)]">
-                你的答案: <span className="text-[var(--rhythm-error)]">{result.userAnswer}</span>
+          <div className="mb-4 space-y-3">
+            <div>
+              <p className="mb-2 text-xs text-[var(--rhythm-neutral-500)]">你的答案</p>
+              <AnswerWithErrors answer={result.userAnswer || ''} errorMap={errorMap} isError />
+            </div>
+            <div>
+              <p className="mb-2 text-xs text-[var(--rhythm-neutral-500)]">正确答案</p>
+              <p className="font-display text-2xl font-bold text-[var(--rhythm-success-light)]">
+                {result.correctAnswer}
               </p>
-            )}
+            </div>
           </div>
         )}
 
-        {/* 冷知识 */}
+        {/* 冷知识 — 固定高度防止跳动 */}
         {result.funFacts.length > 0 && (
-          <div className="mb-4 rounded-xl border border-[var(--rhythm-bg-border)] bg-[var(--rhythm-bg-elevated)] p-4">
-            <p className="mb-1 text-xs text-[var(--rhythm-info]">💡 冷知识</p>
+          <div className="mb-4 rounded-xl border border-[var(--rhythm-bg-border)] bg-[var(--rhythm-bg-elevated)] p-4" style={{ minHeight: '88px' }}>
+            <p className="mb-1 text-xs text-[var(--rhythm-info)]">💡 冷知识</p>
             <p className="text-sm text-[var(--rhythm-neutral-200)] leading-relaxed">
               {result.funFacts[funFactIndex]}
             </p>
@@ -131,6 +172,11 @@ export default function ResultOverlay({
               </div>
             )}
           </div>
+        )}
+
+        {/* 无冷知识时的占位 */}
+        {result.funFacts.length === 0 && (
+          <div className="mb-4" style={{ minHeight: '88px' }} />
         )}
 
         {/* Combo 状态变化 */}
@@ -161,16 +207,12 @@ export default function ResultOverlay({
             <div
               className={cn(
                 'h-full rounded-full transition-all duration-1000',
-                countdown > 30
-                  ? 'bg-[var(--rhythm-success)]'
-                  : countdown > 10
-                    ? 'bg-[var(--rhythm-warning)]'
-                    : 'bg-[var(--rhythm-error)]'
+                countdown > 30 ? 'bg-[var(--rhythm-success)]'
+                  : countdown > 10 ? 'bg-[var(--rhythm-warning)]'
+                  : 'bg-[var(--rhythm-error)]'
               )}
               style={{
-                width: `${result.isCorrect
-                  ? (countdown / 5) * 100
-                  : (countdown / 60) * 100}%`,
+                width: `${result.isCorrect ? (countdown / 5) * 100 : (countdown / 60) * 100}%`,
               }}
             />
           </div>
